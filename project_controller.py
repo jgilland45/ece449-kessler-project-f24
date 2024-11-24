@@ -59,33 +59,7 @@ class ProjectController(KesslerController):
         thrustRule13,
         thrustRule14,
         thrustRule15,
-        thrustRule16,
-        thrustRule17,
-        thrustRule18,
-        thrustRule19,
-        thrustRule20,
-        thrustRule21,
-        thrustRule22,
-        thrustRule23,
-        thrustRule24,
-        thrustRule25,
-        thrustRule26,
-        thrustRule27,
-        thrustRule28,
-        thrustRule29,
-        thrustRule30,
-        thrustRule31,
-        thrustRule32,
-        thrustRule33,
-        thrustRule34,
-        thrustRule35,
-        thrustRule36,
-        thrustRule37,
-        thrustRule38,
-        thrustRule39,
-        thrustRule40,
-        thrustRule41,
-        thrustRule42) = thrust_control()
+        thrustRule16) = thrust_control()
 
         self.thrust_control = ctrl.ControlSystem()
         self.thrust_control.addrule(thrustRule1)
@@ -104,32 +78,6 @@ class ProjectController(KesslerController):
         self.thrust_control.addrule(thrustRule14)
         self.thrust_control.addrule(thrustRule15)
         self.thrust_control.addrule(thrustRule16)
-        self.thrust_control.addrule(thrustRule17)
-        self.thrust_control.addrule(thrustRule18)
-        self.thrust_control.addrule(thrustRule19)
-        self.thrust_control.addrule(thrustRule20)
-        self.thrust_control.addrule(thrustRule21)
-        self.thrust_control.addrule(thrustRule22)
-        self.thrust_control.addrule(thrustRule23)
-        self.thrust_control.addrule(thrustRule24)
-        self.thrust_control.addrule(thrustRule25)
-        self.thrust_control.addrule(thrustRule26)
-        self.thrust_control.addrule(thrustRule27)
-        self.thrust_control.addrule(thrustRule28)
-        self.thrust_control.addrule(thrustRule29)
-        self.thrust_control.addrule(thrustRule30)
-        self.thrust_control.addrule(thrustRule31)
-        self.thrust_control.addrule(thrustRule32)
-        self.thrust_control.addrule(thrustRule33)
-        self.thrust_control.addrule(thrustRule34)
-        self.thrust_control.addrule(thrustRule35)
-        self.thrust_control.addrule(thrustRule36)
-        self.thrust_control.addrule(thrustRule37)
-        self.thrust_control.addrule(thrustRule38)
-        self.thrust_control.addrule(thrustRule39)
-        self.thrust_control.addrule(thrustRule40)
-        self.thrust_control.addrule(thrustRule41)
-        self.thrust_control.addrule(thrustRule42)
         
         
 
@@ -180,6 +128,14 @@ class ProjectController(KesslerController):
         asteroid_displ_x = closest_asteroid["aster"]["position"][0] - ship_pos_x
         asteroid_displ_y = closest_asteroid["aster"]["position"][1] - ship_pos_y
         # asteroid_dist = closest_asteroid["dist"]
+        asteroid_velo_x = closest_asteroid["aster"]["velocity"][0]
+        asteroid_velo_y = closest_asteroid["aster"]["velocity"][1]
+
+        # get max asteroid speed from Kessler code
+        speed_scaler = 2.0 + (4.0 - closest_asteroid["aster"]["size"]) / 4.0
+        aster_max_speed = 60.0 * speed_scaler
+
+        # get velocity of closest asteroid
 
         # if it hasn't already been calculated, calculate normalization distance by using map size diagonal/2
         if not self.normalization_dist:
@@ -188,6 +144,9 @@ class ProjectController(KesslerController):
         # normalize distance
         norm_asteroid_displ_x = asteroid_displ_x/(game_state["map_size"][0] / 2)
         norm_asteroid_displ_y = asteroid_displ_y/(game_state["map_size"][1] / 2)
+        # normalize velocity
+        norm_asteroid_velo_x = asteroid_velo_x/(aster_max_speed)
+        norm_asteroid_velo_y = asteroid_velo_y/(aster_max_speed)
         # norm_ast_distance = asteroid_dist/self.normalization_dist
 
         # calculate relative velocities
@@ -267,11 +226,15 @@ class ProjectController(KesslerController):
         thrusting = ctrl.ControlSystemSimulation(self.thrust_control,flush_after_run=1)
         thrusting.input["asteroid_disp_x"] = norm_asteroid_displ_x
         thrusting.input["asteroid_disp_y"] = norm_asteroid_displ_y
+        thrusting.input["asteroid_vel_x"] = norm_asteroid_velo_x
+        thrusting.input["asteroid_vel_y"] = norm_asteroid_velo_y
         thrusting.input["ship_velo_x"] = rel_vel_x
         thrusting.input["ship_velo_y"] = rel_vel_y
 
         print(f"norm_asteroid_displ_x: {norm_asteroid_displ_x}")
         print(f"norm_asteroid_displ_y: {norm_asteroid_displ_y}")
+        print(f"asteroid_velo_x: {norm_asteroid_velo_x}")
+        print(f"asteroid_velo_x: {norm_asteroid_velo_y}")
         print(f"ship_velo_x: {rel_vel_x}")
         print(f"ship_velo_y: {rel_vel_y}")
 
