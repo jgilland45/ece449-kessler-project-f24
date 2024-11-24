@@ -59,7 +59,15 @@ class ProjectController(KesslerController):
         thrustRule13,
         thrustRule14,
         thrustRule15,
-        thrustRule16) = thrust_control()
+        thrustRule16,
+        thrustRule17,
+        thrustRule18,
+        thrustRule19,
+        thrustRule20,
+        thrustRule21,
+        thrustRule22,
+        thrustRule23,
+        thrustRule24,) = thrust_control()
 
         self.thrust_control = ctrl.ControlSystem()
         self.thrust_control.addrule(thrustRule1)
@@ -78,6 +86,14 @@ class ProjectController(KesslerController):
         self.thrust_control.addrule(thrustRule14)
         self.thrust_control.addrule(thrustRule15)
         self.thrust_control.addrule(thrustRule16)
+        self.thrust_control.addrule(thrustRule17)
+        self.thrust_control.addrule(thrustRule18)
+        self.thrust_control.addrule(thrustRule19)
+        self.thrust_control.addrule(thrustRule20)
+        self.thrust_control.addrule(thrustRule21)
+        self.thrust_control.addrule(thrustRule22)
+        self.thrust_control.addrule(thrustRule23)
+        self.thrust_control.addrule(thrustRule24)
         
         
 
@@ -152,6 +168,10 @@ class ProjectController(KesslerController):
         # calculate relative velocities
         rel_vel_x = ship_state["velocity"][0] / ship_state["max_speed"]
         rel_vel_y = ship_state["velocity"][1] / ship_state["max_speed"]
+
+        # calculate relative displacements
+        rel_disp_x = (ship_state["position"][0] - game_state["map_size"][0] / 2)/(game_state["map_size"][0] / 2)
+        rel_disp_y = (ship_state["position"][1] - game_state["map_size"][1] / 2)/(game_state["map_size"][1] / 2)
 
         # Calculate intercept time given ship & asteroid position, asteroid velocity vector, bullet speed (not direction).
         # Based on Law of Cosines calculation, see notes.
@@ -230,6 +250,8 @@ class ProjectController(KesslerController):
         thrusting.input["asteroid_vel_y"] = norm_asteroid_velo_y
         thrusting.input["ship_velo_x"] = rel_vel_x
         thrusting.input["ship_velo_y"] = rel_vel_y
+        thrusting.input["ship_disp_x"] = rel_disp_x
+        thrusting.input["ship_disp_y"] = rel_disp_y
 
         print(f"norm_asteroid_displ_x: {norm_asteroid_displ_x}")
         print(f"norm_asteroid_displ_y: {norm_asteroid_displ_y}")
@@ -237,6 +259,8 @@ class ProjectController(KesslerController):
         print(f"asteroid_velo_x: {norm_asteroid_velo_y}")
         print(f"ship_velo_x: {rel_vel_x}")
         print(f"ship_velo_y: {rel_vel_y}")
+        print(f"ship_disp_x: {rel_disp_x}")
+        print(f"ship_disp_y: {rel_disp_y}")
 
         thrusting.compute()
 
