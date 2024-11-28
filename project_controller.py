@@ -11,6 +11,7 @@ import matplotlib as plt
 
 from targeting_control import targeting_control
 from thrust_control import thrust_control
+from mine_control import mine_control
 
 # controller adapted from Dr. Dick's controller, with original comments and all.
 class ProjectController(KesslerController):
@@ -131,6 +132,25 @@ class ProjectController(KesslerController):
         self.thrust_control.addrule(thrustRule30)
         self.thrust_control.addrule(thrustRule31)
         self.thrust_control.addrule(thrustRule32)
+
+
+        (
+            mineRule1,
+            mineRule2,
+            mineRule3,
+            mineRule4,
+            mineRule5,
+            mineRule6,
+            mineRule7,
+        ) = mine_control()
+        self.mine_control = ctrl.ControlSystem()
+        self.mine_control.addrule(mineRule1)
+        self.mine_control.addrule(mineRule2)
+        self.mine_control.addrule(mineRule3)
+        self.mine_control.addrule(mineRule4)
+        self.mine_control.addrule(mineRule5)
+        self.mine_control.addrule(mineRule6)
+        self.mine_control.addrule(mineRule7)
         
         
 
@@ -307,7 +327,19 @@ class ProjectController(KesslerController):
         # And return your three outputs to the game simulation. Controller algorithm complete.
         # thrust = 0.0
 
-        drop_mine = False
+        
+        mine_drop = ctrl.ControlSystemSimulation(self.mine_control,flush_after_run=1)
+        mine_drop.input['asteroid_disp_x'] = norm_asteroid_displ_x
+        mine_drop.input['asteroid_disp_y'] = norm_asteroid_displ_y
+        mine_drop.input['ship_velo_x'] = rel_vel_x
+        mine_drop.input['ship_velo_y'] = rel_vel_y
+
+        mine_drop.compute()
+
+        if mine_drop.output['mine_drop'] >= 0:
+            drop_mine = True
+        else:
+            drop_mine = False
         
         self.eval_frames +=1
         

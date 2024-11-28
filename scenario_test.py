@@ -24,14 +24,13 @@ my_test_scenario = Scenario(name='Test Scenario',
 
 # Define Game Settings
 game_settings = {'perf_tracker': True,
-                #  'graphics_type': GraphicsType.Tkinter,
-                 'graphics_type': GraphicsType.NoGraphics,
+                 'graphics_type': GraphicsType.Tkinter,
                  'realtime_multiplier': 1,
                  'graphics_obj': None,
                  'frequency': 30}
 
-# game = KesslerGame(settings=game_settings)  # Use this to visualize the game scenario
-game = TrainerEnvironment(settings=game_settings)  # Use this for max-speed, no-graphics simulation
+game = KesslerGame(settings=game_settings)  # Use this to visualize the game scenario
+# game = TrainerEnvironment(settings=game_settings)  # Use this for max-speed, no-graphics simulation
 
 # Evaluate the game
 pre = time.perf_counter()
