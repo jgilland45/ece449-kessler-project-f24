@@ -18,7 +18,26 @@ class ProjectController(KesslerController):
         self.eval_frames = 0 #What is this?
         self.normalization_dist = None
 
-        targetControlRule1, targetControlRule2, targetControlRule3, targetControlRule5, targetControlRule6, targetControlRule7, targetControlRule8, targetControlRule9, targetControlRule10, targetControlRule12, targetControlRule13, targetControlRule14, targetControlRule15, targetControlRule16, targetControlRule17, targetControlRule19, targetControlRule20, targetControlRule21 = targeting_control()
+        (
+            targetControlRule1,
+            targetControlRule2,
+            targetControlRule3,
+            targetControlRule5,
+            targetControlRule6,
+            targetControlRule7,
+            targetControlRule8,
+            targetControlRule9,
+            targetControlRule10,
+            targetControlRule12,
+            targetControlRule13,
+            targetControlRule14,
+            targetControlRule15,
+            targetControlRule16,
+            targetControlRule17,
+            targetControlRule19,
+            targetControlRule20,
+            targetControlRule21
+        ) = targeting_control()
             
         self.targeting_control = ctrl.ControlSystem()
         self.targeting_control.addrule(targetControlRule1)
@@ -44,30 +63,40 @@ class ProjectController(KesslerController):
         self.targeting_control.addrule(targetControlRule21)
 
         
-        (thrustRule1,
-        thrustRule2,
-        thrustRule3,
-        thrustRule4,
-        thrustRule5,
-        thrustRule6,
-        thrustRule7,
-        thrustRule8,
-        thrustRule9,
-        thrustRule10,
-        thrustRule11,
-        thrustRule12,
-        thrustRule13,
-        thrustRule14,
-        thrustRule15,
-        thrustRule16,
-        thrustRule17,
-        thrustRule18,
-        thrustRule19,
-        thrustRule20,
-        thrustRule21,
-        thrustRule22,
-        thrustRule23,
-        thrustRule24,) = thrust_control()
+        (
+            thrustRule1,
+            thrustRule2,
+            thrustRule3,
+            thrustRule4,
+            thrustRule5,
+            thrustRule6,
+            thrustRule7,
+            thrustRule8,
+            thrustRule9,
+            thrustRule10,
+            thrustRule11,
+            thrustRule12,
+            thrustRule13,
+            thrustRule14,
+            thrustRule15,
+            thrustRule16,
+            thrustRule17,
+            thrustRule18,
+            thrustRule19,
+            thrustRule20,
+            thrustRule21,
+            thrustRule22,
+            thrustRule23,
+            thrustRule24,
+            thrustRule25,
+            thrustRule26,
+            thrustRule27,
+            thrustRule28,
+            thrustRule29,
+            thrustRule30,
+            thrustRule31,
+            thrustRule32,
+        ) = thrust_control()
 
         self.thrust_control = ctrl.ControlSystem()
         self.thrust_control.addrule(thrustRule1)
@@ -94,6 +123,14 @@ class ProjectController(KesslerController):
         self.thrust_control.addrule(thrustRule22)
         self.thrust_control.addrule(thrustRule23)
         self.thrust_control.addrule(thrustRule24)
+        self.thrust_control.addrule(thrustRule25)
+        self.thrust_control.addrule(thrustRule26)
+        self.thrust_control.addrule(thrustRule27)
+        self.thrust_control.addrule(thrustRule28)
+        self.thrust_control.addrule(thrustRule29)
+        self.thrust_control.addrule(thrustRule30)
+        self.thrust_control.addrule(thrustRule31)
+        self.thrust_control.addrule(thrustRule32)
         
         
 
@@ -194,7 +231,7 @@ class ProjectController(KesslerController):
         bullet_speed = 800 # Hard-coded bullet speed from bullet.py
         
         # Determinant of the quadratic formula b^2-4ac
-        targ_det = (-2 * closest_asteroid["dist"] * asteroid_vel * cos_my_theta2)**2 - (4*(asteroid_vel**2 - bullet_speed**2) * closest_asteroid["dist"])
+        targ_det = (-2 * closest_asteroid["dist"] * asteroid_vel * cos_my_theta2)**2 - (4*(asteroid_vel**2 - bullet_speed**2) * (closest_asteroid["dist"]**2))
         
         # Combine the Law of Cosines with the quadratic formula for solve for intercept time. Remember, there are two values produced.
         intrcpt1 = ((2 * closest_asteroid["dist"] * asteroid_vel * cos_my_theta2) + math.sqrt(targ_det)) / (2 * (asteroid_vel**2 -bullet_speed**2))
@@ -217,7 +254,6 @@ class ProjectController(KesslerController):
         intrcpt_x = closest_asteroid["aster"]["position"][0] + closest_asteroid["aster"]["velocity"][0] * (bullet_t+1/30)
         intrcpt_y = closest_asteroid["aster"]["position"][1] + closest_asteroid["aster"]["velocity"][1] * (bullet_t+1/30)
 
-        
         my_theta1 = math.atan2((intrcpt_y - ship_pos_y),(intrcpt_x - ship_pos_x))
         
         # Lastly, find the difference betwwen firing angle and the ship's current orientation. BUT THE SHIP HEADING IS IN DEGREES.
@@ -244,23 +280,25 @@ class ProjectController(KesslerController):
                
         # Pass the inputs to the rulebase
         thrusting = ctrl.ControlSystemSimulation(self.thrust_control,flush_after_run=1)
-        thrusting.input["asteroid_disp_x"] = norm_asteroid_displ_x
-        thrusting.input["asteroid_disp_y"] = norm_asteroid_displ_y
-        thrusting.input["asteroid_vel_x"] = norm_asteroid_velo_x
-        thrusting.input["asteroid_vel_y"] = norm_asteroid_velo_y
-        thrusting.input["ship_velo_x"] = rel_vel_x
-        thrusting.input["ship_velo_y"] = rel_vel_y
-        thrusting.input["ship_disp_x"] = rel_disp_x
-        thrusting.input["ship_disp_y"] = rel_disp_y
+        thrusting.input['asteroid_disp_x'] = norm_asteroid_displ_x
+        thrusting.input['asteroid_disp_y'] = norm_asteroid_displ_y
+        thrusting.input['asteroid_vel_x'] = norm_asteroid_velo_x
+        thrusting.input['asteroid_vel_y'] = norm_asteroid_velo_y
+        thrusting.input['ship_velo_x'] = rel_vel_x
+        thrusting.input['ship_velo_y'] = rel_vel_y
+        thrusting.input['ship_disp_x'] = rel_disp_x
+        thrusting.input['ship_disp_y'] = rel_disp_y
+        thrusting.input['ship_heading'] = ship_state["heading"]
 
-        print(f"norm_asteroid_displ_x: {norm_asteroid_displ_x}")
-        print(f"norm_asteroid_displ_y: {norm_asteroid_displ_y}")
-        print(f"asteroid_velo_x: {norm_asteroid_velo_x}")
-        print(f"asteroid_velo_x: {norm_asteroid_velo_y}")
-        print(f"ship_velo_x: {rel_vel_x}")
-        print(f"ship_velo_y: {rel_vel_y}")
-        print(f"ship_disp_x: {rel_disp_x}")
-        print(f"ship_disp_y: {rel_disp_y}")
+        # print(f"norm_asteroid_displ_x: {norm_asteroid_displ_x}")
+        # print(f"norm_asteroid_displ_y: {norm_asteroid_displ_y}")
+        # print(f"asteroid_velo_x: {norm_asteroid_velo_x}")
+        # print(f"asteroid_velo_x: {norm_asteroid_velo_y}")
+        # print(f"ship_velo_x: {rel_vel_x}")
+        # print(f"ship_velo_y: {rel_vel_y}")
+        # print(f"ship_disp_x: {rel_disp_x}")
+        # print(f"ship_disp_y: {rel_disp_y}")
+        # print(ship_state["heading"])
 
         thrusting.compute()
 

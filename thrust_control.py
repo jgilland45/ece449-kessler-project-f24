@@ -4,15 +4,15 @@ import skfuzzy as fuzz
 
 def thrust_control():   
     # Declare variables
-    # TODO: have some kind of check if it is near the end of the game borders
-    asteroid_disp_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_disp_x') # 0-1 to avoid absolute distances
-    asteroid_disp_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_disp_y') # 0-1 to avoid absolute distances
-    asteroid_vel_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_vel_x') # 0-1 to avoid absolute distances
-    asteroid_vel_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_vel_y') # 0-1 to avoid absolute distances
-    ship_velo_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_velo_x')
-    ship_velo_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_velo_y')
-    ship_disp_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_disp_x')
-    ship_disp_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_disp_y')
+    asteroid_disp_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_disp_x') # -1 -> 1 to avoid absolutes
+    asteroid_disp_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_disp_y') # -1 -> 1 to avoid absolutes
+    asteroid_vel_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_vel_x') # -1 -> 1 to avoid absolutes
+    asteroid_vel_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_vel_y') # -1 -> 1 to avoid absolutes
+    ship_velo_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_velo_x') # -1 -> 1 to avoid absolutes
+    ship_velo_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_velo_y') # -1 -> 1 to avoid absolutes
+    ship_disp_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_disp_x') # -1 -> 1 to avoid absolutes
+    ship_disp_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_disp_y') # -1 -> 1 to avoid absolutes
+    ship_heading = ctrl.Antecedent(np.arange(0.0, 360.0, 1.0), 'ship_heading')
     ship_thrust = ctrl.Consequent(np.arange(-480.0, 480.0, 1), 'ship_thrust') # from Kessler
 
     # Declare fuzzy sets for asteroid_disp_x (relative x-displacement of ship from nearest asteroid)
@@ -86,6 +86,12 @@ def thrust_control():
     ship_disp_y['PS'] = fuzz.trimf(ship_disp_y.universe, [0, 0.2, 0.6])
     ship_disp_y['PM'] = fuzz.trimf(ship_disp_y.universe, [0.2, 0.6, 1.0])
     ship_disp_y['PL'] = fuzz.trimf(ship_disp_y.universe, [0.6, 1.0, 1.0])
+
+    # Declare fuzzy sets for ship_heading (direction ship is facing)
+    ship_heading['N'] = fuzz.trimf(ship_heading.universe, [0, 0, 135])
+    ship_heading['S'] = fuzz.trimf(ship_heading.universe, [45, 135, 225])
+    ship_heading['E'] = fuzz.trimf(ship_heading.universe, [135, 225, 315])
+    ship_heading['W'] = fuzz.trimf(ship_heading.universe, [225, 360, 360])
     
     # Declare fuzzy sets for the ship_thrust consequent
     ship_thrust['NL'] = fuzz.trimf(ship_thrust.universe, [-480.0, -480.0, -470.0])
@@ -126,17 +132,25 @@ def thrust_control():
     rule16 = ctrl.Rule((asteroid_vel_y['NL'] | asteroid_vel_y['NM'] | asteroid_vel_y['NS']) & (asteroid_disp_y['NS'] | asteroid_disp_y['Z'] | asteroid_disp_y['PS'] | asteroid_disp_y['Z']) & (ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS']), ship_thrust['Z'])
 
     # close to left edge
-    rule17 = ctrl.Rule(ship_disp_x['NL'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['NS']), ship_thrust['PS'])
-    rule18 = ctrl.Rule(ship_disp_x['NL'] & (ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_x['PS']), ship_thrust['NS'])
+    rule17 = ctrl.Rule(ship_disp_x['NL'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['NS'] | ship_velo_x['Z']) & ship_heading['W'], ship_thrust['NS'])
+    rule18 = ctrl.Rule(ship_disp_x['NL'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['NS'] | ship_velo_x['Z']) & ship_heading['E'], ship_thrust['PS'])
+    rule19 = ctrl.Rule(ship_disp_x['NL'] & (ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_x['PS']) & ship_heading['W'], ship_thrust['Z'])
+    rule20 = ctrl.Rule(ship_disp_x['NL'] & (ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_x['PS']) & ship_heading['E'], ship_thrust['Z'])
     # close to right edge
-    rule19 = ctrl.Rule(ship_disp_x['PL'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['NS']), ship_thrust['PS'])
-    rule20 = ctrl.Rule(ship_disp_x['PL'] & (ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_x['PS']), ship_thrust['NS'])
+    rule21 = ctrl.Rule(ship_disp_x['PL'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['NS']) & ship_heading['W'], ship_thrust['Z'])
+    rule22 = ctrl.Rule(ship_disp_x['PL'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['NS']) & ship_heading['E'], ship_thrust['Z'])
+    rule23 = ctrl.Rule(ship_disp_x['PL'] & (ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_x['PS'] | ship_velo_x['Z']) & ship_heading['W'], ship_thrust['PS'])
+    rule24 = ctrl.Rule(ship_disp_x['PL'] & (ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_x['PS'] | ship_velo_x['Z']) & ship_heading['E'], ship_thrust['NS'])
     # close to bottom edge
-    rule21 = ctrl.Rule(ship_disp_y['NL'] & (ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['NS']), ship_thrust['PS'])
-    rule22 = ctrl.Rule(ship_disp_y['NL'] & (ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS']), ship_thrust['NS'])
+    rule25 = ctrl.Rule(ship_disp_y['NL'] & (ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['NS'] | ship_velo_y['Z']) & ship_heading['N'], ship_thrust['PS'])
+    rule26 = ctrl.Rule(ship_disp_y['NL'] & (ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['NS'] | ship_velo_y['Z']) & ship_heading['S'], ship_thrust['NS'])
+    rule27 = ctrl.Rule(ship_disp_y['NL'] & (ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS']) & ship_heading['N'], ship_thrust['Z'])
+    rule28 = ctrl.Rule(ship_disp_y['NL'] & (ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS']) & ship_heading['S'], ship_thrust['Z'])
     # close to top edge
-    rule23 = ctrl.Rule(ship_disp_y['PL'] & (ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['NS']), ship_thrust['PS'])
-    rule24 = ctrl.Rule(ship_disp_y['PL'] & (ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS']), ship_thrust['NS'])
+    rule29 = ctrl.Rule(ship_disp_y['PL'] & (ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['NS']) & ship_heading['N'], ship_thrust['Z'])
+    rule30 = ctrl.Rule(ship_disp_y['PL'] & (ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['NS']) & ship_heading['S'], ship_thrust['Z'])
+    rule31 = ctrl.Rule(ship_disp_y['PL'] & (ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS'] | ship_velo_y['Z']) & ship_heading['N'], ship_thrust['NS'])
+    rule32 = ctrl.Rule(ship_disp_y['PL'] & (ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS'] | ship_velo_y['Z']) & ship_heading['S'], ship_thrust['PS'])
      
     #DEBUG
     # asteroid_dist.view()
@@ -167,4 +181,12 @@ def thrust_control():
         rule22,
         rule23,
         rule24,
+        rule25,
+        rule26,
+        rule27,
+        rule28,
+        rule29,
+        rule30,
+        rule31,
+        rule32,
         ]
