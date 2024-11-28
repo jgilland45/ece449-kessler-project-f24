@@ -5,9 +5,9 @@
 
 import time
 
-from kesslergame import Scenario, KesslerGame, GraphicsType
+from kesslergame import Scenario, KesslerGame, GraphicsType, TrainerEnvironment
 from test_controller import TestController
-from scott_controller import ScottDickController
+from project_controller import ProjectController
 from graphics_both import GraphicsBoth
 
 # Define game scenario
@@ -24,18 +24,19 @@ my_test_scenario = Scenario(name='Test Scenario',
 
 # Define Game Settings
 game_settings = {'perf_tracker': True,
-                 'graphics_type': GraphicsType.Tkinter,
+                #  'graphics_type': GraphicsType.Tkinter,
+                 'graphics_type': GraphicsType.NoGraphics,
                  'realtime_multiplier': 1,
                  'graphics_obj': None,
                  'frequency': 30}
 
-game = KesslerGame(settings=game_settings)  # Use this to visualize the game scenario
-# game = TrainerEnvironment(settings=game_settings)  # Use this for max-speed, no-graphics simulation
+# game = KesslerGame(settings=game_settings)  # Use this to visualize the game scenario
+game = TrainerEnvironment(settings=game_settings)  # Use this for max-speed, no-graphics simulation
 
 # Evaluate the game
 pre = time.perf_counter()
 # score, perf_data = game.run(scenario=my_test_scenario, controllers=[TestController(), TestController()])
-score, perf_data = game.run(scenario=my_test_scenario, controllers=[ScottDickController(), ScottDickController()])
+score, perf_data = game.run(scenario=my_test_scenario, controllers=[ProjectController(), ProjectController()])
 
 # Print out some general info about the result
 print('Scenario eval time: '+str(time.perf_counter()-pre))
