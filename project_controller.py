@@ -1,3 +1,6 @@
+"""
+NOTE: some code adapted from Scott Dick's controller
+"""
 from pickle import FALSE
 
 from kesslergame import KesslerController
@@ -11,6 +14,7 @@ import matplotlib as plt
 
 from targeting_control import targeting_control
 from thrust_control import thrust_control
+from mine_control import mine_control
 
 # controller adapted from Dr. Dick's controller, with original comments and all.
 class ProjectController(KesslerController):
@@ -36,7 +40,7 @@ class ProjectController(KesslerController):
             targetControlRule17,
             targetControlRule19,
             targetControlRule20,
-            targetControlRule21
+            targetControlRule21,
         ) = targeting_control()
             
         self.targeting_control = ctrl.ControlSystem()
@@ -64,38 +68,70 @@ class ProjectController(KesslerController):
 
         
         (
-            thrustRule1,
-            thrustRule2,
-            thrustRule3,
-            thrustRule4,
-            thrustRule5,
-            thrustRule6,
-            thrustRule7,
-            thrustRule8,
-            thrustRule9,
-            thrustRule10,
-            thrustRule11,
-            thrustRule12,
-            thrustRule13,
-            thrustRule14,
-            thrustRule15,
-            thrustRule16,
-            thrustRule17,
-            thrustRule18,
-            thrustRule19,
-            thrustRule20,
-            thrustRule21,
-            thrustRule22,
-            thrustRule23,
-            thrustRule24,
-            thrustRule25,
-            thrustRule26,
-            thrustRule27,
-            thrustRule28,
-            thrustRule29,
-            thrustRule30,
-            thrustRule31,
-            thrustRule32,
+            thrustRule1, 
+            thrustRule2, 
+            thrustRule3, 
+            thrustRule4, 
+            thrustRule5, 
+            thrustRule6, 
+            thrustRule7, 
+            thrustRule8, 
+            thrustRule9, 
+            thrustRule10, 
+            thrustRule11, 
+            thrustRule12, 
+            thrustRule13, 
+            thrustRule14, 
+            thrustRule15, 
+            thrustRule16, 
+            thrustRule17, 
+            thrustRule18, 
+            thrustRule19, 
+            thrustRule20, 
+            thrustRule21, 
+            thrustRule22, 
+            thrustRule23, 
+            thrustRule24, 
+            thrustRule25, 
+            thrustRule26, 
+            thrustRule27, 
+            thrustRule28, 
+            thrustRule29, 
+            thrustRule30, 
+            thrustRule31, 
+            thrustRule32, 
+            thrustRule33, 
+            thrustRule34, 
+            thrustRule35, 
+            thrustRule36, 
+            thrustRule37, 
+            thrustRule38, 
+            thrustRule39, 
+            thrustRule40, 
+            thrustRule41, 
+            thrustRule42, 
+            thrustRule43, 
+            thrustRule44, 
+            thrustRule45, 
+            thrustRule46, 
+            thrustRule47, 
+            thrustRule48, 
+            thrustRule49, 
+            thrustRule50, 
+            thrustRule51, 
+            thrustRule52, 
+            thrustRule53, 
+            thrustRule54, 
+            thrustRule55, 
+            thrustRule56, 
+            thrustRule57, 
+            thrustRule58, 
+            thrustRule59, 
+            thrustRule60, 
+            thrustRule61, 
+            thrustRule62, 
+            thrustRule63, 
+            thrustRule64, 
         ) = thrust_control()
 
         self.thrust_control = ctrl.ControlSystem()
@@ -131,6 +167,59 @@ class ProjectController(KesslerController):
         self.thrust_control.addrule(thrustRule30)
         self.thrust_control.addrule(thrustRule31)
         self.thrust_control.addrule(thrustRule32)
+        self.thrust_control.addrule(thrustRule33)
+        self.thrust_control.addrule(thrustRule34)
+        self.thrust_control.addrule(thrustRule35)
+        self.thrust_control.addrule(thrustRule36)
+        self.thrust_control.addrule(thrustRule37)
+        self.thrust_control.addrule(thrustRule38)
+        self.thrust_control.addrule(thrustRule39)
+        self.thrust_control.addrule(thrustRule40)
+        self.thrust_control.addrule(thrustRule41)
+        self.thrust_control.addrule(thrustRule42)
+        self.thrust_control.addrule(thrustRule43)
+        self.thrust_control.addrule(thrustRule44)
+        self.thrust_control.addrule(thrustRule45)
+        self.thrust_control.addrule(thrustRule46)
+        self.thrust_control.addrule(thrustRule47)
+        self.thrust_control.addrule(thrustRule48)
+        self.thrust_control.addrule(thrustRule49)
+        self.thrust_control.addrule(thrustRule50)
+        self.thrust_control.addrule(thrustRule51)
+        self.thrust_control.addrule(thrustRule52)
+        self.thrust_control.addrule(thrustRule53)
+        self.thrust_control.addrule(thrustRule54)
+        self.thrust_control.addrule(thrustRule55)
+        self.thrust_control.addrule(thrustRule56)
+        self.thrust_control.addrule(thrustRule57)
+        self.thrust_control.addrule(thrustRule58)
+        self.thrust_control.addrule(thrustRule59)
+        self.thrust_control.addrule(thrustRule60)
+        self.thrust_control.addrule(thrustRule61)
+        self.thrust_control.addrule(thrustRule62)
+        self.thrust_control.addrule(thrustRule63)
+        self.thrust_control.addrule(thrustRule64)
+
+
+        (
+            mineRule1,
+            mineRule2,
+            mineRule3,
+            mineRule4,
+            mineRule5,
+            mineRule6,
+            mineRule7,
+            mineRule8,
+        ) = mine_control()
+        self.mine_control = ctrl.ControlSystem()
+        self.mine_control.addrule(mineRule1)
+        self.mine_control.addrule(mineRule2)
+        self.mine_control.addrule(mineRule3)
+        self.mine_control.addrule(mineRule4)
+        self.mine_control.addrule(mineRule5)
+        self.mine_control.addrule(mineRule6)
+        self.mine_control.addrule(mineRule7)
+        self.mine_control.addrule(mineRule8)
         
         
 
@@ -180,7 +269,7 @@ class ProjectController(KesslerController):
         # gets distance to closest asteroid
         asteroid_displ_x = closest_asteroid["aster"]["position"][0] - ship_pos_x
         asteroid_displ_y = closest_asteroid["aster"]["position"][1] - ship_pos_y
-        # asteroid_dist = closest_asteroid["dist"]
+        asteroid_dist = closest_asteroid["dist"]
         asteroid_velo_x = closest_asteroid["aster"]["velocity"][0]
         asteroid_velo_y = closest_asteroid["aster"]["velocity"][1]
 
@@ -200,7 +289,7 @@ class ProjectController(KesslerController):
         # normalize velocity
         norm_asteroid_velo_x = asteroid_velo_x/(aster_max_speed)
         norm_asteroid_velo_y = asteroid_velo_y/(aster_max_speed)
-        # norm_ast_distance = asteroid_dist/self.normalization_dist
+        norm_ast_distance = asteroid_dist/self.normalization_dist
 
         # calculate relative velocities
         rel_vel_x = ship_state["velocity"][0] / ship_state["max_speed"]
@@ -280,15 +369,13 @@ class ProjectController(KesslerController):
                
         # Pass the inputs to the rulebase
         thrusting = ctrl.ControlSystemSimulation(self.thrust_control,flush_after_run=1)
-        thrusting.input['asteroid_disp_x'] = norm_asteroid_displ_x
-        thrusting.input['asteroid_disp_y'] = norm_asteroid_displ_y
-        thrusting.input['asteroid_vel_x'] = norm_asteroid_velo_x
-        thrusting.input['asteroid_vel_y'] = norm_asteroid_velo_y
+        thrusting.input['asteroid_dist'] = norm_ast_distance
+        thrusting.input['asteroid_angle'] = asteroid_ship_theta
         thrusting.input['ship_velo_x'] = rel_vel_x
         thrusting.input['ship_velo_y'] = rel_vel_y
         thrusting.input['ship_disp_x'] = rel_disp_x
         thrusting.input['ship_disp_y'] = rel_disp_y
-        thrusting.input['ship_heading'] = ship_state["heading"]
+        thrusting.input['ship_heading'] = (ship_state["heading"] * (math.pi / 360)) - (math.pi / 2)
 
         # print(f"norm_asteroid_displ_x: {norm_asteroid_displ_x}")
         # print(f"norm_asteroid_displ_y: {norm_asteroid_displ_y}")
@@ -307,7 +394,19 @@ class ProjectController(KesslerController):
         # And return your three outputs to the game simulation. Controller algorithm complete.
         # thrust = 0.0
 
-        drop_mine = False
+        
+        mine_drop = ctrl.ControlSystemSimulation(self.mine_control,flush_after_run=1)
+        mine_drop.input['asteroid_disp_x'] = norm_asteroid_displ_x
+        mine_drop.input['asteroid_disp_y'] = norm_asteroid_displ_y
+        mine_drop.input['ship_velo_x'] = rel_vel_x
+        mine_drop.input['ship_velo_y'] = rel_vel_y
+
+        mine_drop.compute()
+
+        if mine_drop.output['mine_drop'] >= 0:
+            drop_mine = True
+        else:
+            drop_mine = False
         
         self.eval_frames +=1
         
