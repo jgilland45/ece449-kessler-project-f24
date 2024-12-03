@@ -53,6 +53,7 @@ def mine_control():
 
     # if asteroids close and ship is moving, drop mine
     rule1 = ctrl.Rule(asteroid_disp_x['Z'] & asteroid_disp_y['Z'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['NS'] | ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_x['PS']) & (ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['NS'] | ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS']), mine_drop['Y'])
+    rule8 = ctrl.Rule(asteroid_disp_x['Z'] & asteroid_disp_y['Z'] & (ship_velo_x['NS']| ship_velo_x['PS'] | ship_velo_x['Z']) & (ship_velo_y['NS'] | ship_velo_y['PS'] | ship_velo_y['Z']), mine_drop['N'])
     rule2 = ctrl.Rule(asteroid_disp_x['NS'], mine_drop['N'])
     rule3 = ctrl.Rule(asteroid_disp_x['NM'], mine_drop['N'])
     rule4 = ctrl.Rule(asteroid_disp_x['NL'], mine_drop['N'])
@@ -76,4 +77,5 @@ def mine_control():
         rule5,
         rule6,
         rule7,
+        rule8,
     ]
