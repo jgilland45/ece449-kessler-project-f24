@@ -20,10 +20,10 @@ NOTE: targeting_control code adapted from Scott Dick's controller
 def targeting_control():
     # self.targeting_control is the targeting rulebase, which is static in this controller.      
     # Declare variables
-    bullet_time = ctrl.Antecedent(np.arange(0,1.0,0.002), 'bullet_time')
+    bullet_time = ctrl.Antecedent(np.arange(0,1.0,0.01), 'bullet_time')
     theta_delta = ctrl.Antecedent(np.arange(-1*math.pi/30,math.pi/30,0.1), 'theta_delta') # Radians due to Python
-    ship_turn = ctrl.Consequent(np.arange(-180,180,1), 'ship_turn') # Degrees due to Kessler
-    ship_fire = ctrl.Consequent(np.arange(-1,1,0.1), 'ship_fire')
+    ship_turn = ctrl.Consequent(np.arange(-180,180,10), 'ship_turn') # Degrees due to Kessler
+    ship_fire = ctrl.Consequent(np.arange(-1,1,0.5), 'ship_fire')
     
     #Declare fuzzy sets for bullet_time (how long it takes for the bullet to reach the intercept point)
     bullet_time['S'] = fuzz.trimf(bullet_time.universe,[0,0,0.05])
@@ -94,14 +94,14 @@ def targeting_control():
 
 def thrust_control():   
     # Declare variables
-    asteroid_dist = ctrl.Antecedent(np.arange(0, 1.0, 0.001), 'asteroid_dist') # 0 -> 1 to avoid absolutes
-    asteroid_angle = ctrl.Antecedent(np.arange(-math.pi / 2, math.pi / 2, 0.001), 'asteroid_angle')
-    ship_velo_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_velo_x') # -1 -> 1 to avoid absolutes
-    ship_velo_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_velo_y') # -1 -> 1 to avoid absolutes
-    ship_disp_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_disp_x') # -1 -> 1 to avoid absolutes
-    ship_disp_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_disp_y') # -1 -> 1 to avoid absolutes
-    ship_heading = ctrl.Antecedent(np.arange(-math.pi / 2, math.pi / 2, 0.001), 'ship_heading')
-    ship_thrust = ctrl.Consequent(np.arange(-480.0, 480.0, 1), 'ship_thrust') # from Kessler
+    asteroid_dist = ctrl.Antecedent(np.arange(0, 1.0, 0.01), 'asteroid_dist') # 0 -> 1 to avoid absolutes
+    asteroid_angle = ctrl.Antecedent(np.arange(-math.pi / 2, math.pi / 2, 0.1), 'asteroid_angle')
+    ship_velo_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.01), 'ship_velo_x') # -1 -> 1 to avoid absolutes
+    ship_velo_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.01), 'ship_velo_y') # -1 -> 1 to avoid absolutes
+    ship_disp_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.01), 'ship_disp_x') # -1 -> 1 to avoid absolutes
+    ship_disp_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.01), 'ship_disp_y') # -1 -> 1 to avoid absolutes
+    ship_heading = ctrl.Antecedent(np.arange(-math.pi / 2, math.pi / 2, 0.1), 'ship_heading')
+    ship_thrust = ctrl.Consequent(np.arange(-480.0, 480.0, 10), 'ship_thrust') # from Kessler
 
     # Declare fuzzy sets for asteroid_dist (relative x-displacement of ship from nearest asteroid)
     asteroid_dist['S'] = fuzz.trimf(asteroid_dist.universe, [0, 0, 0.2])
@@ -342,10 +342,10 @@ def thrust_control():
 
 def mine_control():
 
-    asteroid_disp_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_disp_x') # -1 -> 1 to avoid absolutes
-    asteroid_disp_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'asteroid_disp_y') # -1 -> 1 to avoid absolutes
-    ship_velo_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_velo_x') # -1 -> 1 to avoid absolutes
-    ship_velo_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.001), 'ship_velo_y') # -1 -> 1 to avoid absolutes
+    asteroid_disp_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.01), 'asteroid_disp_x') # -1 -> 1 to avoid absolutes
+    asteroid_disp_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.01), 'asteroid_disp_y') # -1 -> 1 to avoid absolutes
+    ship_velo_x = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.01), 'ship_velo_x') # -1 -> 1 to avoid absolutes
+    ship_velo_y = ctrl.Antecedent(np.arange(-1.0, 1.0, 0.01), 'ship_velo_y') # -1 -> 1 to avoid absolutes
     mine_drop = ctrl.Consequent(np.arange(-1.0, 1.0, 0.1), 'mine_drop') # from Kessler
 
     # Declare fuzzy sets for asteroid_disp_x (relative x-displacement of ship from nearest asteroid)
