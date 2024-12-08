@@ -1,0 +1,135 @@
+import pygad
+import math
+import numpy as np
+from kesslergame import KesslerController
+import skfuzzy as fuzz
+from skfuzzy import control as ctrl
+
+# Define the Fuzzy Controller
+class GeneticFuzzyController(KesslerController):
+    def __init__(self, genome):
+        super().__init__()
+        self.eval_frames = 0
+
+        # Define fuzzy input variables
+        distance = ctrl.Antecedent(np.arange(0, 1000, 1), 'distance')  # Distance to nearest asteroid
+        angle = ctrl.Antecedent(np.arange(-180, 181, 1), 'angle')  # Angle difference in degrees
+
+        # Define fuzzy output variables
+        turn_rate = ctrl.Consequent(np.arange(-180, 181, 1), 'turn_rate')
+        thrust = ctrl.Consequent(np.arange(0, 1.1, 0.1), 'thrust')
+        fire = ctrl.Consequent(np.arange(0, 1.1, 0.1), 'fire')
+
+        # Apply genome parameters to membership functions
+        distance['close'] = fuzz.trimf(distance.universe, genome[0:3])
+        distance['medium'] = fuzz.trimf(distance.universe, genome[3:6])
+        distance['far'] = fuzz.trimf(distance.universe, genome[6:9])
+
+        angle['sharp_left'] = fuzz.trimf(angle.universe, [-180, -180, -90])
+        angle['slight_left'] = fuzz.trimf(angle.universe, [-90, -45, 0])
+        angle['center'] = fuzz.trimf(angle.universe, [-10, 0, 10])
+        angle['slight_right'] = fuzz.trimf(angle.universe, [0, 45, 90])
+        angle['sharp_right'] = fuzz.trimf(angle.universe, [90, 180, 180])
+
+        turn_rate['sharp_left'] = fuzz.trimf(turn_rate.universe, [-180, -180, -90])
+        turn_rate['slight_left'] = fuzz.trimf(turn_rate.universe, [-90, -45, 0])
+        turn_rate['straight'] = fuzz.trimf(turn_rate.universe, [-10, 0, 10])
+        turn_rate['slight_right'] = fuzz.trimf(turn_rate.universe, [0, 45, 90])
+        turn_rate['sharp_right'] = fuzz.trimf(turn_rate.universe, [90, 180, 180])
+
+        thrust['none'] = fuzz.zmf(thrust.universe, 0, 0.3)
+        thrust['low'] = fuzz.trimf(thrust.universe, [0.2, 0.5, 0.8])
+        thrust['high'] = fuzz.smf(thrust.universe, 0.7, 1.0)
+
+        fire['no'] = fuzz.zmf(fire.universe, 0, 0.5)
+        fire['yes'] = fuzz.smf(fire.universe, 0.5, 1.0)
+
+        # Define rules with genome weighting
+        rules = [
+            ctrl.Rule(distance['close'] & angle['center'], (turn_rate['straight'], thrust['none'], fire['yes'])),
+            ctrl.Rule(distance['medium'] & angle['slight_right'], (turn_rate['slight_right'], thrust['low'], fire['yes'])),
+            ctrl.Rule(distance['medium'] & angle['slight_left'], (turn_rate['slight_left'], thrust['low'], fire['yes'])),
+        ]
+
+        # Build the control system
+        self.control_system = ctrl.ControlSystem(rules)
+        self.control_simulation = ctrl.ControlSystemSimulation(self.control_system)
+
+    def actions(self, ship_state, game_state):
+        # Extract nearest asteroid and calculate distance and angle
+        ship_x, ship_y = ship_state['position']
+        ship_heading = math.radians(ship_state['heading'])
+
+        closest_asteroid = None
+        min_distance = float('inf')
+        for asteroid in game_state['asteroids']:
+            asteroid_x, asteroid_y = asteroid['position']
+            dist = math.sqrt((asteroid_x - ship_x)**2 + (asteroid_y - ship_y)**2)
+            if dist < min_distance:
+                min_distance = dist
+                closest_asteroid = asteroid
+
+        if not closest_asteroid:
+            return 0.0, 0.0, False, False
+
+        asteroid_x, asteroid_y = closest_asteroid['position']
+        angle_to_asteroid = math.atan2(asteroid_y - ship_y, asteroid_x - ship_x)
+        angle_diff = math.degrees((angle_to_asteroid - ship_heading + math.pi) % (2 * math.pi) - math.pi)
+
+        # Pass inputs to the fuzzy system
+        self.control_simulation.input['distance'] = min_distance
+        self.control_simulation.input['angle'] = angle_diff
+
+        self.control_simulation.compute()
+
+        turn_rate = self.control_simulation.output['turn_rate']
+        thrust = self.control_simulation.output['thrust']
+        fire = self.control_simulation.output['fire'] > 0.5
+
+        drop_mine = False  # No mine-dropping for now
+        self.eval_frames += 1
+        return thrust, turn_rate, fire, drop_mine
+
+    @property
+    def name(self):
+        return "PyGAD Genetic Fuzzy Controller"
+
+
+# Fitness Function
+def fitness_function(genome, _):
+    controller = GeneticFuzzyController(genome)
+    # Simulate a game scenario and return the score
+    scenario = load_game_scenario()  # Replace with the actual game scenario loader
+    score, _ = scenario.run(controller)
+    return score.total_score
+
+
+# PyGAD Parameters
+num_genes = 9  # Number of parameters in the genome
+population_size = 50
+num_generations = 20
+
+# Initialize PyGAD
+ga_instance = pygad.GA(
+    num_generations=num_generations,
+    num_parents_mating=10,
+    fitness_func=fitness_function,
+    sol_per_pop=population_size,
+    num_genes=num_genes,
+    init_range_low=0,
+    init_range_high=1000,
+    mutation_percent_genes=10,
+    mutation_type="random",
+    crossover_type="single_point",
+)
+
+# Run the Genetic Algorithm
+ga_instance.run()
+
+# Best Solution
+best_solution, best_solution_fitness, _ = ga_instance.best_solution()
+print(f"Best Solution: {best_solution}")
+print(f"Best Fitness: {best_solution_fitness}")
+
+# Plot Fitness Progress
+ga_instance.plot_fitness()
