@@ -16,11 +16,11 @@ def fitness(ga_instance, solution, solution_idx):
                                 # {'position': (400, 600), 'angle': 90, 'lives': 3, 'team': 2, "mines_remaining": 3},
                             ],
                             map_size=(1000, 800),
-                            time_limit=10,
+                            time_limit=60,
                             ammo_limit_multiplier=0,
                             stop_if_no_ammo=False)
     game_settings = {'perf_tracker': True,
-                     'graphics_type': GraphicsType.Tkinter,
+                     'graphics_type': GraphicsType.NoGraphics,
                      'realtime_multiplier': 1,
                      'graphics_obj': None,
                      'frequency': 30}
@@ -91,7 +91,7 @@ def init_pop():
             values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
             values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
             values.extend([x/(math.pi / 2) for x in sorted([-math.pi/2, -math.pi/4, 0, -math.pi/4, 0, math.pi/4, 0, math.pi/4, math.pi/2, math.pi/4, math.pi/2, math.pi/2, -math.pi/2, -math.pi/2, -math.pi/4])])
-            values.extend([x / 480 for x in sorted([-480.0, -480.0, -300.0, -480.0, -300.0, -100.0, -300.0, -100.0, 0, -100.0, 0, 100.0, 0, 100.0, 300.0, 100.0, 300.0, 480.0, 300.0, 480.0, 480.0])])
+            values.extend([x / 480 for x in sorted([-480.0, -480.0, -460.0, -480.0, -460.0, -420.0, -460.0, -420.0, 0, -420.0, 0, 420.0, 0, 420.0, 460.0, 420.0, 460.0, 480.0, 460.0, 480.0, 480.0])])
             values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
             values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
             values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
@@ -108,11 +108,11 @@ def init_pop():
 
 file_name = 'ga_instance'
 # num_generations = 5
-num_generations = 1
+num_generations = 15
 # num_parents_mating = 2
-num_parents_mating = 1
+num_parents_mating = 2
 # sol_per_pop = 5
-sol_per_pop = 2
+sol_per_pop = 5
 num_genes = 238 # number of fuzzy membership function variables
 last_fitness = 0
 population = init_pop()
@@ -126,6 +126,7 @@ ga = pygad.GA(
     on_generation=on_generation,
     initial_population=population,
     mutation_type=mutation,
+    parallel_processing=["process", 8],
 )
 ga.run()
 ga.plot_fitness()

@@ -2,6 +2,7 @@
 NOTE: some code adapted from Scott Dick's controller
 """
 from pickle import FALSE
+import pickle
 
 from kesslergame import KesslerController
 from typing import Dict, Tuple
@@ -140,19 +141,19 @@ def thrust_control(chrom):
     # close by, facing it
         # moving to it
     rule1 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['NM'])
-    rule2 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['PM'])
+    rule2 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['NM'])
     rule3 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['NM'])
-    rule4 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['PM'])
+    rule4 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['NM'])
         # moving away from it
-    rule5 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['Z'])
-    rule6 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['Z'])
-    rule7 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['Z'])
-    rule8 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['Z'])
+    rule5 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['PS'])
+    rule6 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['PS'])
+    rule7 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['PS'])
+    rule8 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['PS'])
         # not moving
-    rule9 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NS'])
-    rule10 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NS'])
-    rule11 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NS'])
-    rule12 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NS'])
+    rule9 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NM'])
+    rule10 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NM'])
+    rule11 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NM'])
+    rule12 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NM'])
 
     # close by, facing away
         # moving to it
@@ -178,27 +179,27 @@ def thrust_control(chrom):
     rule27 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['Z'])
     rule28 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['Z'])
         # moving away from it
-    rule29 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['PM'])
-    rule30 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['PM'])
-    rule31 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['PM'])
-    rule32 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['PM'])
+    rule29 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['Z'])
+    rule30 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['Z'])
+    rule31 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['Z'])
+    rule32 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['Z'])
         # not moving
-    rule33 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['PM'])
-    rule34 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['PM'])
-    rule35 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['PM'])
-    rule36 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['PM'])
+    rule33 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['Z'])
+    rule34 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['Z'])
+    rule35 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['Z'])
+    rule36 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['Z'])
 
     # far away, facing away
         # moving to it
-    rule37 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & (asteroid_angle['S'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['PS'])
-    rule38 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & (asteroid_angle['N'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['PS'])
-    rule39 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['W'] | asteroid_angle['S'] | asteroid_angle['N'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['PS'])
-    rule40 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & (asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['N'] | asteroid_angle['S'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['PS'])
+    rule37 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & (asteroid_angle['S'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['Z'])
+    rule38 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & (asteroid_angle['N'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['Z'])
+    rule39 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['W'] | asteroid_angle['S'] | asteroid_angle['N'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['Z'])
+    rule40 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & (asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['N'] | asteroid_angle['S'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['Z'])
         # moving away from it
-    rule41 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & (asteroid_angle['S'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['Z'])
-    rule42 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & (asteroid_angle['N'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['Z'])
-    rule43 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['W'] | asteroid_angle['S'] | asteroid_angle['N'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['Z'])
-    rule44 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & (asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['N'] | asteroid_angle['S'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['Z'])
+    rule41 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & (asteroid_angle['S'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['NS'])
+    rule42 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & (asteroid_angle['N'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['NS'])
+    rule43 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['W'] | asteroid_angle['S'] | asteroid_angle['N'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['NS'])
+    rule44 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['W'] & (asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['N'] | asteroid_angle['S'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['NS'])
         # not moving
     rule45 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['N'] & (asteroid_angle['S'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['Z'])
     rule46 = ctrl.Rule((asteroid_dist['M'] | asteroid_dist['L']) & (ship_heading['S'] & (asteroid_angle['N'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['Z'])
@@ -310,14 +311,20 @@ def mine_control(chrom):
 
 
     # if asteroids close and ship is moving, drop mine
-    rule1 = ctrl.Rule(asteroid_disp_x['Z'] & asteroid_disp_y['Z'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['NS'] | ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_x['PS']) & (ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['NS'] | ship_velo_y['PL'] | ship_velo_y['PM'] | ship_velo_y['PS']), mine_drop['Y'])
-    rule8 = ctrl.Rule(asteroid_disp_x['Z'] & asteroid_disp_y['Z'] & (ship_velo_x['NS']| ship_velo_x['PS'] | ship_velo_x['Z']) & (ship_velo_y['NS'] | ship_velo_y['PS'] | ship_velo_y['Z']), mine_drop['N'])
+    rule1 = ctrl.Rule(asteroid_disp_x['Z'] & asteroid_disp_y['Z'] & (ship_velo_x['NL'] | ship_velo_x['NM'] | ship_velo_x['PL'] | ship_velo_x['PM'] | ship_velo_y['NL'] | ship_velo_y['NM'] | ship_velo_y['PL'] | ship_velo_y['PM']), mine_drop['Y'])
     rule2 = ctrl.Rule(asteroid_disp_x['NS'], mine_drop['N'])
     rule3 = ctrl.Rule(asteroid_disp_x['NM'], mine_drop['N'])
     rule4 = ctrl.Rule(asteroid_disp_x['NL'], mine_drop['N'])
     rule5 = ctrl.Rule(asteroid_disp_x['PS'], mine_drop['N'])
     rule6 = ctrl.Rule(asteroid_disp_x['PM'], mine_drop['N'])
     rule7 = ctrl.Rule(asteroid_disp_x['PL'], mine_drop['N'])
+    rule8 = ctrl.Rule(asteroid_disp_x['Z'] & asteroid_disp_y['Z'] & (ship_velo_x['NS']| ship_velo_x['PS'] | ship_velo_x['Z'] | ship_velo_y['NS'] | ship_velo_y['PS'] | ship_velo_y['Z']), mine_drop['N'])
+    rule9 = ctrl.Rule(asteroid_disp_y['NS'], mine_drop['N'])
+    rule10 = ctrl.Rule(asteroid_disp_y['NM'], mine_drop['N'])
+    rule11 = ctrl.Rule(asteroid_disp_y['NL'], mine_drop['N'])
+    rule12 = ctrl.Rule(asteroid_disp_y['PS'], mine_drop['N'])
+    rule13 = ctrl.Rule(asteroid_disp_y['PM'], mine_drop['N'])
+    rule14 = ctrl.Rule(asteroid_disp_y['PL'], mine_drop['N'])
 
     return [
         rule1,
@@ -328,6 +335,12 @@ def mine_control(chrom):
         rule6,
         rule7,
         rule8,
+        rule9,
+        rule10,
+        rule11,
+        rule12,
+        rule13,
+        rule14,
     ]
 
 # controller adapted from Dr. Dick's controller, with original comments and all.
@@ -337,27 +350,34 @@ class ProjectController(KesslerController):
         self.normalization_dist = None
 
         if len(solution) == 0:
+            try:
+                sol_file = open('ga_instance', 'rb')
+                best_sol_data_from_file = pickle.load(sol_file)
+                values = best_sol_data_from_file['parameters']
+                sol_file.close()
+                solution = values
             
-            values = []
+            except:
+                values = []
 
-            # my custom values to start initialization
-            values.extend([-1, -1, -1, -1, -0.9, -0.9, -0.8, 1])
-            values.extend([x/(math.pi / 30) for x in sorted([-1*math.pi/30, -2*math.pi/90, -1*math.pi/30, -2*math.pi/90, -1*math.pi/90, -2*math.pi/90, -1*math.pi/90, math.pi/90, -1*math.pi/90, math.pi/90, 2*math.pi/90, math.pi/90, 2*math.pi/90, math.pi/30, 2*math.pi/90, math.pi/30])])
-            values.extend([x/180 for x in sorted([-180, -180, -120, -180, -120, -60, -120, -60, 60, -60, 60, 120, 60, 120, 180, 120, 180, 180])])
-            values.extend(sorted([-1, -1, 0.0, 0.0, 1, 1]))
-            values.extend([(x * 2) - 1 for x in sorted([0, 0, 0.2, 0.2, 0.5, 0.8, 0.8, 1, 1.0])])
-            values.extend([x/(math.pi / 2) for x in sorted([-math.pi/2, -math.pi/4, 0, -math.pi/4, 0, math.pi/4, 0, math.pi/4, math.pi/2, math.pi/4, math.pi/2, math.pi/2, -math.pi/2, -math.pi/2, -math.pi/4])])
-            values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
-            values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
-            values.extend([x/(math.pi / 2) for x in sorted([-math.pi/2, -math.pi/4, 0, -math.pi/4, 0, math.pi/4, 0, math.pi/4, math.pi/2, math.pi/4, math.pi/2, math.pi/2, -math.pi/2, -math.pi/2, -math.pi/4])])
-            values.extend([x / 480 for x in sorted([-480.0, -480.0, -300.0, -480.0, -300.0, -100.0, -300.0, -100.0, 0, -100.0, 0, 100.0, 0, 100.0, 300.0, 100.0, 300.0, 480.0, 300.0, 480.0, 480.0])])
-            values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
-            values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
-            values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
-            values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
-            values.extend(sorted([-1, -1, 0.0, 0.0, 1, 1]))
+                # my custom values to start initialization
+                values.extend([-1, -1, -1, -1, -0.9, -0.9, -0.8, 1])
+                values.extend([x/(math.pi / 30) for x in sorted([-1*math.pi/30, -2*math.pi/90, -1*math.pi/30, -2*math.pi/90, -1*math.pi/90, -2*math.pi/90, -1*math.pi/90, math.pi/90, -1*math.pi/90, math.pi/90, 2*math.pi/90, math.pi/90, 2*math.pi/90, math.pi/30, 2*math.pi/90, math.pi/30])])
+                values.extend([x/180 for x in sorted([-180, -180, -120, -180, -120, -60, -120, -60, 60, -60, 60, 120, 60, 120, 180, 120, 180, 180])])
+                values.extend(sorted([-1, -1, 0.0, 0.0, 1, 1]))
+                values.extend([(x * 2) - 1 for x in sorted([0, 0, 0.2, 0.2, 0.5, 0.8, 0.8, 1, 1.0])])
+                values.extend([x/(math.pi / 2) for x in sorted([-math.pi/2, -math.pi/4, 0, -math.pi/4, 0, math.pi/4, 0, math.pi/4, math.pi/2, math.pi/4, math.pi/2, math.pi/2, -math.pi/2, -math.pi/2, -math.pi/4])])
+                values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
+                values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
+                values.extend([x/(math.pi / 2) for x in sorted([-math.pi/2, -math.pi/4, 0, -math.pi/4, 0, math.pi/4, 0, math.pi/4, math.pi/2, math.pi/4, math.pi/2, math.pi/2, -math.pi/2, -math.pi/2, -math.pi/4])])
+                values.extend([x / 480 for x in sorted([-480.0, -480.0, -460.0, -480.0, -460.0, -420.0, -460.0, -420.0, 0, -420.0, 0, 420.0, 0, 420.0, 460.0, 420.0, 460.0, 480.0, 460.0, 480.0, 480.0])])
+                values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
+                values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
+                values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
+                values.extend(sorted([-1.0, -1.0, -0.6, -1.0, -0.6, -0.2, -0.6, -0.2, 0, -0.2, 0, 0.2, 0, 0.2, 0.6, 0.2, 0.6, 1.0, 0.6, 1.0, 1.0]))
+                values.extend(sorted([-1, -1, 0.0, 0.0, 1, 1]))
 
-            solution = values
+                solution = values
 
         (
             targetControlRule1,
@@ -547,6 +567,12 @@ class ProjectController(KesslerController):
             mineRule6,
             mineRule7,
             mineRule8,
+            mineRule9,
+            mineRule10,
+            mineRule11,
+            mineRule12,
+            mineRule13,
+            mineRule14,
         ) = mine_control(solution)
         self.mine_control = ctrl.ControlSystem()
         self.mine_control.addrule(mineRule1)
@@ -557,6 +583,12 @@ class ProjectController(KesslerController):
         self.mine_control.addrule(mineRule6)
         self.mine_control.addrule(mineRule7)
         self.mine_control.addrule(mineRule8)
+        self.mine_control.addrule(mineRule9)
+        self.mine_control.addrule(mineRule10)
+        self.mine_control.addrule(mineRule11)
+        self.mine_control.addrule(mineRule12)
+        self.mine_control.addrule(mineRule13)
+        self.mine_control.addrule(mineRule14)
         
         
 
