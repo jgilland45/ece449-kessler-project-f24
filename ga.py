@@ -3,6 +3,7 @@ import pygad
 import os.path
 from kesslergame import Scenario, KesslerGame, GraphicsType, TrainerEnvironment
 from project_controller import ProjectController
+from test_controller import TestController
 import math
 import random
 import pickle
@@ -13,7 +14,7 @@ def fitness(ga_instance, solution, solution_idx):
                             num_asteroids=10,
                             ship_states=[
                                 {'position': (400, 400), 'angle': 90, 'lives': 3, 'team': 1, "mines_remaining": 3},
-                                # {'position': (400, 600), 'angle': 90, 'lives': 3, 'team': 2, "mines_remaining": 3},
+                                {'position': (400, 600), 'angle': 90, 'lives': 3, 'team': 2, "mines_remaining": 3},
                             ],
                             map_size=(1000, 800),
                             time_limit=60,
@@ -25,7 +26,7 @@ def fitness(ga_instance, solution, solution_idx):
                      'graphics_obj': None,
                      'frequency': 30}
     game = KesslerGame(settings=game_settings)  # Use this to visualize the game scenario
-    score, perf_data = game.run(scenario=my_test_scenario, controllers=[ProjectController(solution)])
+    score, perf_data = game.run(scenario=my_test_scenario, controllers=[ProjectController(solution), TestController()])
     # print(f"Calc score: {score.teams[0].asteroids_hit}")
     return score.teams[0].asteroids_hit
     # return 4
