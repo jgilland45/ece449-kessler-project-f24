@@ -108,11 +108,11 @@ def init_pop():
 
 file_name = 'ga_instance'
 # num_generations = 5
-num_generations = 15
+num_generations = 10
 # num_parents_mating = 2
-num_parents_mating = 2
+num_parents_mating = 4
 # sol_per_pop = 5
-sol_per_pop = 5
+sol_per_pop = 8
 num_genes = 238 # number of fuzzy membership function variables
 last_fitness = 0
 population = init_pop()

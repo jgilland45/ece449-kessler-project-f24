@@ -140,20 +140,20 @@ def thrust_control(chrom):
 
     # close by, facing it
         # moving to it
-    rule1 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['NM'])
-    rule2 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['PM'])
-    rule3 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['NM'])
-    rule4 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['PM'])
+    rule1 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['NL'])
+    rule2 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['NL'])
+    rule3 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['NL'])
+    rule4 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['NL'])
         # moving away from it
     rule5 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['NL'] | ship_velo_y['NM']), ship_thrust['Z'])
     rule6 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['PL'] | ship_velo_y['PM']), ship_thrust['Z'])
     rule7 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['Z'])
     rule8 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['Z'])
         # not moving
-    rule9 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NS'])
-    rule10 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NS'])
-    rule11 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NS'])
-    rule12 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NS'])
+    rule9 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & asteroid_angle['N']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NM'])
+    rule10 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & asteroid_angle['S']) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NM'])
+    rule11 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['E1'] | asteroid_angle['E2'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NM'])
+    rule12 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & asteroid_angle['W']) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NM'])
 
     # close by, facing away
         # moving to it
@@ -167,10 +167,10 @@ def thrust_control(chrom):
     rule19 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['W'] | asteroid_angle['S'] | asteroid_angle['N'])) & (ship_velo_x['PL'] | ship_velo_x['PM']), ship_thrust['Z'])
     rule20 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & (asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['N'] | asteroid_angle['S'])) & (ship_velo_x['NL'] | ship_velo_x['NM']), ship_thrust['Z'])
         # not moving
-    rule21 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & (asteroid_angle['S'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['Z'])
-    rule22 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & (asteroid_angle['N'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['Z'])
-    rule23 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['W'] | asteroid_angle['S'] | asteroid_angle['N'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['Z'])
-    rule24 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & (asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['N'] | asteroid_angle['S'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['Z'])
+    rule21 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['N'] & (asteroid_angle['S'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NS'])
+    rule22 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['S'] & (asteroid_angle['N'] | asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['W'])) & (ship_velo_y['Z'] | ship_velo_y['NS'] | ship_velo_y['PS']), ship_thrust['NS'])
+    rule23 = ctrl.Rule((asteroid_dist['S']) & ((ship_heading['E1'] | ship_heading['E2']) & (asteroid_angle['W'] | asteroid_angle['S'] | asteroid_angle['N'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NS'])
+    rule24 = ctrl.Rule((asteroid_dist['S']) & (ship_heading['W'] & (asteroid_angle['E1'] | asteroid_angle['E2'] | asteroid_angle['N'] | asteroid_angle['S'])) & (ship_velo_x['Z'] | ship_velo_x['NS'] | ship_velo_x['PS']), ship_thrust['NS'])
 
     # far away, facing it
         # moving to it
